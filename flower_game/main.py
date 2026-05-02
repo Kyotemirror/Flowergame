@@ -5,7 +5,7 @@ import pygame
 
 
 # ----------------------------
-# Config loading
+# Config loading (touch removed)
 # ----------------------------
 DEFAULT_CONFIG = {
     "width": 1000,
@@ -18,9 +18,13 @@ DEFAULT_CONFIG = {
     "spread_chance": 0.03,
     "wither_old_at": 12,
     "fullscreen": False,
-    "touch": {"enabled": True, "brush_radius": 2, "erase_strength": 4},
     "grid_lines": True,
+
+    # Optional mouse brush tuning (not touchscreen)
+    "brush_radius": 2,
+    "erase_strength": 4,
 }
+
 
 def load_config(path="config.json"):
     cfg = DEFAULT_CONFIG.copy()
@@ -28,12 +32,7 @@ def load_config(path="config.json"):
         try:
             with open(path, "r", encoding="utf-8") as f:
                 user_cfg = json.load(f)
-            # shallow merge + nested merge for touch
             cfg.update(user_cfg)
-            if "touch" in user_cfg and isinstance(user_cfg["touch"], dict):
-                merged_touch = DEFAULT_CONFIG["touch"].copy()
-                merged_touch.update(user_cfg["touch"])
-                cfg["touch"] = merged_touch
         except Exception:
             # If config is malformed, fall back to defaults silently
             pass
@@ -57,12 +56,11 @@ BIRTH_2_CHANCE = float(cfg["birth_2_chance"])
 SPREAD_CHANCE = float(cfg["spread_chance"])
 WITHER_OLD_AT = int(cfg["wither_old_at"])
 
-TOUCH_ENABLED = bool(cfg.get("touch", {}).get("enabled", True))
-BRUSH_RADIUS = int(cfg.get("touch", {}).get("brush_radius", 2))
-ERASE_STRENGTH = int(cfg.get("touch", {}).get("erase_strength", 4))
-
 FULLSCREEN = bool(cfg.get("fullscreen", False))
 DRAW_GRID_LINES = bool(cfg.get("grid_lines", True))
+
+BRUSH_RADIUS = int(cfg.get("brush_radius", 2))
+ERASE_STRENGTH = int(cfg.get("erase_strength", 4))
 
 # Colors
 BG = (10, 10, 20)
@@ -101,7 +99,7 @@ def blend(c1, c2, t):
     )
 
 def paint_circle(gx, gy, value=1, soften_erase=False):
-    """Paint a circular brush. If soften_erase=True, reduce age instead of hard 0."""
+    """Mouse brush. If soften_erase=True, reduce age instead of hard 0."""
     r = BRUSH_RADIUS
     for dy in range(-r, r + 1):
         for dx in range(-r, r + 1):
@@ -238,18 +236,10 @@ while True:
             elif event.key == pygame.K_DOWN:
                 FPS = max(1, FPS - 1)
             elif event.key == pygame.K_ESCAPE and FULLSCREEN:
-                # Convenience: allow exit fullscreen apps during testing
                 pygame.quit()
                 raise SystemExit
 
-        # Touchscreen-friendly input (native touch events)
-        if TOUCH_ENABLED and event.type in (pygame.FINGERDOWN, pygame.FINGERMOTION):
-            gx = int(event.x * COLS)
-            gy = int(event.y * ROWS)
-            if 0 <= gx < COLS and 0 <= gy < ROWS:
-                paint_circle(gx, gy, value=1)
-
-    # Mouse fallback (works on desktop and touch that emulates mouse)
+    # Mouse input (left = plant, right = soften-erase)
     mx, my = pygame.mouse.get_pos()
     gx = mx // CELL_SIZE
     gy = my // CELL_SIZE
