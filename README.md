@@ -1,2 +1,4 @@
-# Flowergame
-a flower game of lif
+# Flower game
+-------------
+# The game of life,death and rebirth
+
