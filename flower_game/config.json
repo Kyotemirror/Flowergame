@@ -11,12 +11,5 @@
   "wither_old_at": 12,
 
   "fullscreen": true,
-
-  "touch": {
-    "enabled": true,
-    "brush_radius": 2,
-    "erase_strength": 4
-  },
-
   "grid_lines": true
 }
