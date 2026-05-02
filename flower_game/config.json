@@ -11,5 +11,8 @@
   "wither_old_at": 12,
 
   "fullscreen": true,
-  "grid_lines": true
+  "grid_lines": true,
+
+  "brush_radius": 2,
+  "erase_strength": 4
 }
