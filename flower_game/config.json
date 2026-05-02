@@ -1,9 +1,22 @@
 {
+  "width": 1000,
+  "height": 700,
   "cell_size": 10,
   "fps": 30,
+
   "max_age": 18,
   "fade_rate": 1,
   "birth_2_chance": 0.18,
   "spread_chance": 0.03,
-  "wither_old_at": 12
+  "wither_old_at": 12,
+
+  "fullscreen": true,
+
+  "touch": {
+    "enabled": true,
+    "brush_radius": 2,
+    "erase_strength": 4
+  },
+
+  "grid_lines": true
 }
